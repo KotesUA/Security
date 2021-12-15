@@ -17,7 +17,7 @@ def try_create_acc(last_id):
     while acc is None:
         acc = create_account(last_id)
         if acc is None:
-            print(f'id {last_id} exists, skipping...')
+            print(f'ID {last_id} exists, skipping...')
         last_id += 1
     return acc
 
@@ -75,11 +75,11 @@ def MT_BETTER_crack():
     account_id = acc.id
 
     inputs = []
-    for i in range(999):
+    for i in range(624):
         res = play(PlayMode.BETTER_MT, account_id, 1, 42)
         acc = res.account
         inputs.append(res.real_number)
-        print(f'Playing {i + 1}/999; money left: {acc.money}...')
+        print(f'Playing {i + 1}/624; balance: {acc.money}...')
 
     cracked_rng = MTCrack(inputs).make_rng()
 

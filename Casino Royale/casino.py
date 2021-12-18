@@ -94,11 +94,11 @@ def MT_BETTER_crack():
 
 if __name__ == '__main__':
 
-    # LCG_crack()
+    LCG_crack()
     # Yay! https://docs.google.com/document/d/1jhf3P6Iob5fxN4EkM9illeYgAnzwmaCJ2SbSkzpftH4/edit
 
     # MT_crack()
     # Yay! It's different from the first one: https://docs.google.com/document/d/1_W00GZXLNTk6BML6jEaAJDqwMVjaQUv5WL1DCW7ipy4/edit
 
-    MT_BETTER_crack()
+    # MT_BETTER_crack()
     # Yay! The last one: https://docs.google.com/document/d/121efoh98-uQQdgpz1fc_Zu27SiNLzib1o2Ah_sr5f1Y/edit?usp=sharing

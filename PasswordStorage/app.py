@@ -1,34 +1,37 @@
-import flask
-from flask import Flask, request
+from flask import Flask, request, render_template
+import controller
 
 app = Flask(__name__)
 
 
-@app.route('/', methods=["GET", "POST"])
-def index():  # put application's code here
-    return flask.render_template("index.html")
+@app.route('/', methods=["GET"])
+def index():
+    return render_template("index.html")
 
 
-@app.route('/register', methods=["GET", "POST"])
+@app.route('/register', methods=["POST"])
 def register():
     data = request.get_json()
     email = data["email"]
     password = data["password"]
+    controller.register(email, password)
+    print("Registration completed, welcome to PasswordStorage!")
+    return "OK"
 
-    # TODO: make database and hashing
 
-    return "Registration completed, welcome to PasswordStorage!"
-
-@app.route('/login', methods=["GET", "POST"])
+@app.route('/login', methods=["POST"])
 def login():
     data = request.get_json()
     email = data["email"]
     password = data["password"]
-
-    # TODO: make login via database
-
-    return "Logging in completed, welcome to PasswordStorage!"
+    if controller.login(email, password):
+        print("Logging in completed, welcome to PasswordStorage!")
+        return "OK"
+    else:
+        print("User credentials invalid!")
+        return "BAD"
 
 
 if __name__ == '__main__':
+    controller.createUsers()
     app.run()

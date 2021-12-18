@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PasswordStorage</title>
+</head>
+<body>
+    <h1>Login page</h1>
+
+    <table>
+        <tr>
+            <td>Email:</td>
+            <td><input type="email" id="email"></td>
+        </tr>
+        <tr>
+            <td>Password:</td>
+            <td><input type="password" id="password"></td>
+        </tr>
+    </table>
+
+    <br>
+
+    <table>
+        <tr>
+            <td><input type="submit" value="Register" id="register"></td>
+            <td><input type="submit" value="Login" id="login"></td>
+        </tr>
+    </table>
+
+    <script>
+        function getCredentials() {
+            return {
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value
+            };
+        }
+
+        function postData(url, data, callback) {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = () => {if (xhr.readyState === 4) callback(xhr);};
+            xhr.open("post", url);
+            xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+            xhr.send(JSON.stringify(data));
+        }
+
+        document.getElementById("register").addEventListener("click", () => {
+            let data = getCredentials();
+            postData("/register", data, xhr => alert(xhr.response));
+        });
+
+        document.getElementById("login").addEventListener("click", () => {
+            let data = getCredentials();
+            postData("/login", data, xhr => alert(xhr.response));
+        });
+    </script>
+</body>
+</html>

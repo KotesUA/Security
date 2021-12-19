@@ -2,8 +2,7 @@ import sqlite3
 from cryptography.fernet import Fernet
 
 
-KEY = b'apT1vYBIu1ok9nniHAF6oWY-5aCN0rt9mkB6eedc6x4='
-KEY_TEL = b'ulsiCWAvTfSA_SBb9gwfgAx4yI3aieqUShg5u4QNbQg='
+KEK = b'apT1vYBIu1ok9nniHAF6oWY-5aCN0rt9mkB6eedc6x4='
 
 
 def toBytes(val):
@@ -22,9 +21,14 @@ def register(email, password, number):
     createUsers()
     connection = sqlite3.connect('database')
     cursor = connection.cursor()
-    encrypted_password = Fernet(KEY).encrypt(toBytes(password))
-    encrypted_number = Fernet(KEY_TEL).encrypt(toBytes(number))
-    cursor.execute("INSERT INTO users (email,password,number) VALUES (?,?,?)", (email,encrypted_password,encrypted_number))
+    DEK = Fernet.generate_key()
+    encrypted_password = Fernet(DEK).encrypt(toBytes(password))
+    encrypted_number = Fernet(DEK).encrypt(toBytes(number))
+    encrypted_dek = Fernet(KEK).encrypt(DEK)
+    cursor.execute("INSERT INTO users (email,password,number,key) VALUES (?,?,?,?)", (email,
+                                                                                      encrypted_password,
+                                                                                      encrypted_number,
+                                                                                      encrypted_dek))
     connection.commit()
     connection.close()
 
@@ -35,14 +39,18 @@ def login(email, password):
     try:
         cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         record = cursor.fetchone()
-        result = toBytes(password) == Fernet(KEY).decrypt(record[2])
+        DEK = Fernet(KEK).decrypt(record[4])
+        result = toBytes(password) == Fernet(DEK).decrypt(record[2])
     except Exception:
         connection.commit()
         connection.close()
         return False
     connection.commit()
     connection.close()
-    return Fernet(KEY_TEL).decrypt(record[3])
+    if not result:
+        return result
+    else:
+        return Fernet(DEK).decrypt(record[3])
 
 
 def showUsers():

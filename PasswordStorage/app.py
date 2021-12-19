@@ -38,7 +38,7 @@ def login():
         return "BAD"
     else:
         print("Logging in completed, welcome to PasswordStorage!")
-        print("Your tel is ", controller.login(email, password))
+        print("Your tel is ", controller.login(email, password).decode("utf-8"))
         return "OK"
 
 

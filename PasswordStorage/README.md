@@ -12,3 +12,6 @@ To ensure security of users' credentials, we are using Fernet symmetric encrypti
 
 ##Registration
 Password is required to be 8 chars or longer, including at least 8 digits.
+
+##Personal info
+Storing password and personal data is secured by envelope protection: DEK exists in database, encrypted with static KEK. However, this can be improved by generating KEK locally on client side.

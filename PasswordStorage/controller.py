@@ -3,6 +3,7 @@ from cryptography.fernet import Fernet
 
 
 KEY = b'apT1vYBIu1ok9nniHAF6oWY-5aCN0rt9mkB6eedc6x4='
+KEY_TEL = b'ulsiCWAvTfSA_SBb9gwfgAx4yI3aieqUShg5u4QNbQg='
 
 
 def toBytes(val):
@@ -17,12 +18,13 @@ def createUsers():
     connection.close()
 
 
-def register(email, password):
+def register(email, password, number):
     createUsers()
     connection = sqlite3.connect('database')
     cursor = connection.cursor()
-    encrypted = Fernet(KEY).encrypt(toBytes(password))
-    cursor.execute("INSERT INTO users (email,password) VALUES (?,?)", (email, encrypted))
+    encrypted_password = Fernet(KEY).encrypt(toBytes(password))
+    encrypted_number = Fernet(KEY_TEL).encrypt(toBytes(number))
+    cursor.execute("INSERT INTO users (email,password,number) VALUES (?,?,?)", (email,encrypted_password,encrypted_number))
     connection.commit()
     connection.close()
 
@@ -40,7 +42,7 @@ def login(email, password):
         return False
     connection.commit()
     connection.close()
-    return result
+    return Fernet(KEY_TEL).decrypt(record[3])
 
 
 def showUsers():

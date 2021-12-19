@@ -1,7 +1,8 @@
 function getCredentials() {
     return {
         email: document.getElementById("email").value,
-        password: document.getElementById("password").value
+        password: document.getElementById("password").value,
+        number: document.getElementById("number").value
     };
 }
 

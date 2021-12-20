@@ -1,32 +1,40 @@
+# read encrypted file to bytearrays array line by line
 def readIn():
     with open("encrypted.txt") as text:
         result = [bytearray.fromhex(line) for line in text.readlines()]
-        # result = text.readlines()
     return result
 
 
+# XOR two bytearrays to a bytearray
 def XOR(str1, str2):
     res = [a ^ b for a, b in zip(str1, str2)]
     return res
-    # return ([chr(ord(a) ^ ord(b)) for a, b in zip(str1, str2)])
 
 
-def toHex(str):
-    return bytearray.fromhex(''.join(hex(ord(s))[2:] for s in str))
+# convert bytearray to ASCII readable text
+def toReadableText(arr):
+    return ''.join([chr(item) for item in arr])
 
+
+# convert ASCII string to bytearray
+def toByteArray(str):
+    return bytearray.fromhex(str.encode('utf-8').hex())
 
 
 if __name__ == '__main__':
     inText = readIn()
-    zeroLine = "For who would bear the whips and scorns of time,".encode('utf-8').hex()
 
-    print(inText[0])
-    print(bytearray.fromhex(zeroLine))
+    # XOR first string with every other and XOR with guessed words
+    # for i in range(1, len(inText) - 1):
+    #     res = XOR(inText[0], inText[i])
+    #     line0 = XOR(res, toByteArray("for who would bear the whips and scorns of "))
+    #     print(toReadableText(line0))
 
-    smth = XOR(inText[0], toHex(zeroLine))
-    print(smth)
+    # XOR third line and decrypted line to recover the key
+    key = XOR(inText[2], toByteArray("the pangs of dispriz'd love, the law's delay,"))
 
-    text = ''
-    for item in smth:
-        text += chr(item)
-    print(text)
+    # recover all ines and write to output
+    with open("decrypted.txt", "a") as file:
+        decrypted = [toReadableText(XOR(key, line)) for line in inText]
+        print(decrypted)
+        file.writelines("\n".join(decrypted))

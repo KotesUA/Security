@@ -12,4 +12,4 @@ encrypted_message1 ^ encrypted_message2 = (message1 ^ key) ^ (message2 ^ key)
 
 Sounds complicated, so let's encrypt some images to show this type of attack:
 
-![Image explanation](https://github.com/KotesUA/Security/tree/master/WeakSalt/Explanation.jpg?raw=true)
+![Image explanation](https://github.com/KotesUA/Security/tree/master/WeakSalt/Explanation.jpg)

@@ -1,28 +1,32 @@
-import random
-
-
 def readIn():
     with open("encrypted.txt") as text:
-        result = text.readlines()
+        result = [bytearray.fromhex(line) for line in text.readlines()]
+        # result = text.readlines()
     return result
 
 
-def saveDecoded():
-    print()
-    # do something
-
-
 def XOR(str1, str2):
-    return [chr(ord(a) ^ ord(b)) for a, b in zip(str1, str2)]
+    res = [a ^ b for a, b in zip(str1, str2)]
+    return res
+    # return ([chr(ord(a) ^ ord(b)) for a, b in zip(str1, str2)])
+
+
+def toHex(str):
+    return bytearray.fromhex(''.join(hex(ord(s))[2:] for s in str))
 
 
 
 if __name__ == '__main__':
     inText = readIn()
-    for i in range(1, 18):
-        print(XOR(inText[0], inText[i]))
-        i += 1
-    # TODO save letters that are resolved and repeat
-    # TODO if XOR encrypted and key results in decrypted, maybe should do reverse to know the key
-    # \x00 is space
-    # Big thx to https://samwho.dev/blog/toying-with-cryptography-crib-dragging/
+    zeroLine = "For who would bear the whips and scorns of time,".encode('utf-8').hex()
+
+    print(inText[0])
+    print(bytearray.fromhex(zeroLine))
+
+    smth = XOR(inText[0], toHex(zeroLine))
+    print(smth)
+
+    text = ''
+    for item in smth:
+        text += chr(item)
+    print(text)

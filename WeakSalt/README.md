@@ -56,7 +56,7 @@ Then, for each row, we Xor it with different English words, that are popular: "t
 > 
 >With#tb
 
-And then we're just keep combining these words, spaces and different cases to retrieve more. Somewhere in these attempts we saw a result "Than fly ", which seems to be a true part of the text, so XORing on this brought us to a phrase "Than fly", which is obviously must be "Than fly to ", which gave us all first words in the text.
+And then we're just keep combining these words, spaces and different cases to retrieve more. Somewhere in these attempts we saw a result "Than fly ", which is obviously must be "Than fly to ", which gave us all first words in the text.
 
 Searching for exact match for "The pangs of" led us to a full string of William Shakespear's Hamlet:
 ![Key moment](https://github.com/KotesUA/Security/tree/master/WeakSalt/Google.png?raw=true)

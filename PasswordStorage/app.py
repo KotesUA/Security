@@ -46,5 +46,5 @@ def login():
 if __name__ == '__main__':
     cert_gen()
     context = ('selfsigned.crt', 'private.key')
-    controller.createUsers()
+    controller.create_users()
     app.run(ssl_context = context)

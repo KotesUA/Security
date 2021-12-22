@@ -1,36 +1,45 @@
+from nacl import hash, encoding
+import secrets
 import sqlite3
-from cryptography.fernet import Fernet
-import hashlib
-import pynacl
+
+import argon2
+from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
 
 
-KEK = b'apT1vYBIu1ok9nniHAF6oWY-5aCN0rt9mkB6eedc6x4='
+KEK = b'\x8d\xcfR\xda\x83\xe2\xa06fp\xa2n\xadS\xdc\xd7\xb8\x02\xe7F\x08h\t\xe6\xd1\xda\x97i\xec4x\x97'
+HASHER = argon2.PasswordHasher()
 
 
-def toBytes(val):
-    return bytes(val, encoding="utf-8")
+def to_bytes(text):
+    return text.encode("utf-8")
 
 
-def createUsers():
-    connection = sqlite3.connect('database')
-    cursor = connection.cursor()
-    cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY,email TEXT NOT NULL,password TEXT NOT NULL)")
-    connection.commit()
-    connection.close()
+def from_bytes(text):
+    return text.decode("utf-8")
+
+
+def gen_hash(text):
+    return hash.sha512(to_bytes(text), encoding.Base64Encoder)
 
 
 def register(email, password, number):
-    createUsers()
+    create_users()
     connection = sqlite3.connect('database')
     cursor = connection.cursor()
-    DEK = Fernet.generate_key()
-    encrypted_password = Fernet(DEK).encrypt(hashlib.sha512(password))
-    encrypted_number = Fernet(DEK).encrypt(hashlib.sha512(password))
-    encrypted_dek = Fernet(KEK).encrypt(DEK)
-    cursor.execute("INSERT INTO users (email,password,number,key) VALUES (?,?,?,?)", (email,
+
+    dek_nonce = secrets.token_bytes(12)
+    DEK = ChaCha20Poly1305.generate_key()
+    encrypted_dek = ChaCha20Poly1305(KEK).encrypt(dek_nonce, DEK, None)
+    nonce = secrets.token_bytes(12)
+
+    encrypted_password = ChaCha20Poly1305(DEK).encrypt(nonce, gen_hash(password), None)
+    encrypted_number = ChaCha20Poly1305(DEK).encrypt(nonce, to_bytes(number), None)
+    cursor.execute("INSERT INTO users (email,password,number,dek,dek_nonce,nonce) VALUES (?,?,?,?,?,?)", (email,
                                                                                       encrypted_password,
                                                                                       encrypted_number,
-                                                                                      encrypted_dek))
+                                                                                      encrypted_dek,
+                                                                                      dek_nonce,
+                                                                                      nonce))
     connection.commit()
     connection.close()
 
@@ -41,9 +50,10 @@ def login(email, password):
     try:
         cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         record = cursor.fetchone()
-        DEK = Fernet(KEK).decrypt(record[4])
-        result = hashlib.sha512(password) == Fernet(DEK).decrypt(record[2])
+        DEK = ChaCha20Poly1305(KEK).decrypt(record[5], record[4], None)
+        result = gen_hash(password) == ChaCha20Poly1305(DEK).decrypt(record[6], record[2], None)
     except Exception:
+        print(Exception)
         connection.commit()
         connection.close()
         return False
@@ -52,10 +62,18 @@ def login(email, password):
     if not result:
         return result
     else:
-        return Fernet(DEK).decrypt(record[3])
+        return ChaCha20Poly1305(DEK).decrypt(record[6], record[3], None)
 
 
-def showUsers():
+def create_users():
+    connection = sqlite3.connect('database')
+    cursor = connection.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY,email TEXT NOT NULL,password TEXT NOT NULL)")
+    connection.commit()
+    connection.close()
+
+
+def show_users():
     connection = sqlite3.connect('database')
     cursor = connection.cursor()
     cursor.execute("SELECT email, password FROM users")
@@ -64,7 +82,7 @@ def showUsers():
     return users
 
 
-def dropUsers():
+def drop_users():
     connection = sqlite3.connect('database')
     cursor = connection.cursor()
     cursor.execute("DROP TABLE IF EXISTS users")

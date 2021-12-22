@@ -1,7 +1,13 @@
+import cryptography
 from OpenSSL import crypto, SSL
 
+
+# declaring paths
 CERT_FILE = "selfsigned.crt"
 KEY_FILE = "private.key"
+PASS_FILE = "pass.bin"
+
+
 
 def cert_gen(emailAddress = "mail@mail.com",
              commonName = "Hotel California",
@@ -15,8 +21,7 @@ def cert_gen(emailAddress = "mail@mail.com",
              KEY_FILE = "private.key",
              CERT_FILE="selfsigned.crt"):
         # create a key pair
-        k = crypto.PKey()
-        k.generate_key(crypto.TYPE_EC, 4096)
+        k = cryptography
 
         # create a self-signed cert
         cert = crypto.X509()

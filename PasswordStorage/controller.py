@@ -1,5 +1,7 @@
 import sqlite3
 from cryptography.fernet import Fernet
+import hashlib
+import pynacl
 
 
 KEK = b'apT1vYBIu1ok9nniHAF6oWY-5aCN0rt9mkB6eedc6x4='
@@ -22,8 +24,8 @@ def register(email, password, number):
     connection = sqlite3.connect('database')
     cursor = connection.cursor()
     DEK = Fernet.generate_key()
-    encrypted_password = Fernet(DEK).encrypt(toBytes(password))
-    encrypted_number = Fernet(DEK).encrypt(toBytes(number))
+    encrypted_password = Fernet(DEK).encrypt(hashlib.sha512(password))
+    encrypted_number = Fernet(DEK).encrypt(hashlib.sha512(password))
     encrypted_dek = Fernet(KEK).encrypt(DEK)
     cursor.execute("INSERT INTO users (email,password,number,key) VALUES (?,?,?,?)", (email,
                                                                                       encrypted_password,
@@ -40,7 +42,7 @@ def login(email, password):
         cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         record = cursor.fetchone()
         DEK = Fernet(KEK).decrypt(record[4])
-        result = toBytes(password) == Fernet(DEK).decrypt(record[2])
+        result = hashlib.sha512(password) == Fernet(DEK).decrypt(record[2])
     except Exception:
         connection.commit()
         connection.close()

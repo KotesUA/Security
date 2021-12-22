@@ -16,7 +16,7 @@ def cert_gen(emailAddress = "mail@mail.com",
              CERT_FILE="selfsigned.crt"):
         # create a key pair
         k = crypto.PKey()
-        k.generate_key(crypto.TYPE_RSA, 4096)
+        k.generate_key(crypto.TYPE_EC, 4096)
 
         # create a self-signed cert
         cert = crypto.X509()

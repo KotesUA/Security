@@ -27,14 +27,14 @@ if __name__ == '__main__':
     # XOR first string with every other and XOR with guessed words
     # for i in range(1, len(inText) - 1):
     #     res = XOR(inText[0], inText[i])
-    #     line0 = XOR(res, toByteArray("for who would bear the whips and scorns of "))
+    #     line0 = XOR(res, toByteArray("Than fly to "))
     #     print(toReadableText(line0))
 
-    # XOR third line and decrypted line to recover the key
+    # # XOR third line and decrypted line to recover the key
     key = XOR(inText[2], toByteArray("the pangs of dispriz'd love, the law's delay,"))
 
     # recover all ines and write to output
     with open("decrypted.txt", "a") as file:
         decrypted = [toReadableText(XOR(key, line)) for line in inText]
         print(decrypted)
-        file.writelines("\n".join(decrypted))
+        # file.writelines("\n".join(decrypted))

@@ -1,25 +1,10 @@
-from nacl import hash, encoding
+from encryption import to_bytes, from_bytes, gen_hash, gen_dek, encrypt
 import secrets
 import sqlite3
-
-import argon2
 from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
 
 
 KEK = b'\x8d\xcfR\xda\x83\xe2\xa06fp\xa2n\xadS\xdc\xd7\xb8\x02\xe7F\x08h\t\xe6\xd1\xda\x97i\xec4x\x97'
-HASHER = argon2.PasswordHasher()
-
-
-def to_bytes(text):
-    return text.encode("utf-8")
-
-
-def from_bytes(text):
-    return text.decode("utf-8")
-
-
-def gen_hash(text):
-    return hash.sha512(to_bytes(text), encoding.Base64Encoder)
 
 
 def register(email, password, number):
@@ -27,8 +12,7 @@ def register(email, password, number):
     connection = sqlite3.connect('database')
     cursor = connection.cursor()
 
-    dek_nonce = secrets.token_bytes(12)
-    DEK = ChaCha20Poly1305.generate_key()
+    dek_nonce, DEK = gen_dek()
     encrypted_dek = ChaCha20Poly1305(KEK).encrypt(dek_nonce, DEK, None)
     nonce = secrets.token_bytes(12)
 

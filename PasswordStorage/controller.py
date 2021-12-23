@@ -10,6 +10,7 @@ def register(email, password, number):
     cursor = connection.cursor()
 
     dek = gen_dek()
+    print(dek)
     dek_nonce, encrypted_dek = encrypt(KEK, dek)
 
     pass_nonce, encrypted_password = encrypt(dek, gen_hash(password))
@@ -27,8 +28,6 @@ def login(email, password):
 
     cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
     record = cursor.fetchone()
-    print(record[5])
-    print(record[4])
     dek = decrypt(KEK, record[5], record[4])
     result = gen_hash(password) == decrypt(dek, record[6], record[2])
 
@@ -37,4 +36,4 @@ def login(email, password):
     if not result:
         return result
     else:
-        return decrypt(record[6], record[3], None)
+        return decrypt(dek, record[6], record[3])

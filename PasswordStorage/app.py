@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template
 import controller
-from tls import cert_gen
+from tls import setup
 
 app = Flask(__name__)
 
@@ -44,7 +44,6 @@ def login():
 
 
 if __name__ == '__main__':
-    cert_gen()
-    context = ('selfsigned.crt', 'private.key')
+    context = setup()
     controller.create_users()
     app.run(ssl_context = context)

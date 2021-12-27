@@ -1,10 +1,13 @@
 import base64
 import binascii
+
 try:
     from math import gcd
 except ImportError:
     from fractions import gcd
 from functools import reduce
+
+SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,. '
 
 
 def binary_to_text(bits):
@@ -27,22 +30,48 @@ def binary_to_text(bits):
     return text.split('\n')
 
 
-def xor1_crack(encrypted, key):
+def single_byte_xor(encrypted, key):
     # Turn hex input to chars
     encrypted = binascii.unhexlify(encrypted)
 
-    # Try 255 keys from all ascii to decrypt
-    # for i in range(255):
-    #     decrypted = "".join([chr(item ^ i) for item in encrypted])
-    #     print(i, " || ", decrypted)
-
-    # Key 23 seems to be the answer
+    # XOR every encrypted char with key char
     decrypted = "".join([chr(item ^ key) for item in encrypted])
 
     # Remove some garbage
-    decrypted = decrypted.replace('\x00', ' ').replace('\x0e', '\n').replace('½', '"').replace('¼', '"').replace('Â', '').replace('', '')
+    decrypted = decrypted.replace('\x00', ' ').replace('\x0e', '\n').replace('½', '"').replace('¼', '"').replace('Â',
+                                                                                                                 '').replace(
+        '', '')
 
     return decrypted
+
+
+def xor1_crack(encrypted, mode):
+    # Turn hex or string input to char ints
+    if mode == 0:
+        encrypted = binascii.unhexlify(encrypted)
+    else:
+        encrypted = base64.b64decode(encrypted)
+
+    # Try 255 keys from all ascii to decrypt
+    possible_keys = []
+    local_max = 0
+    for i in range(255):
+        count = 0
+        for item in encrypted:
+            c = chr(item ^ i)
+            if c in SYMBOLS: count += 1
+        if count > local_max:
+            local_max = count
+
+    # Find most relevant keys
+    for i in range(255):
+        count = 0
+        for item in encrypted:
+            c = chr(item ^ i)
+            if c in SYMBOLS: count += 1
+        if (count >= local_max - 2):
+            possible_keys.append(chr(i))
+    return possible_keys
 
 
 def ascii_to_int(text):
@@ -90,8 +119,18 @@ def find_key_length(encrypted):
 def xor2_crack(encrypted):
     key = "L0l"
 
+    # Find key length
     key_length = find_key_length(encrypted)
-    print(key_length)
 
-    # decrypted = vigenere_xor(encrypted, key)
-    # return decrypted
+    # Split encrypted string to key_length substrings
+    items = [encrypted[x:x + 12] for x in range(0, len(encrypted), 12)]
+
+    # Find a key char for every Nth element of substrings
+    possible_keys = []
+    for n in range(0, key_length):
+        temp = ''.join([items[i][n] for i in range(0, len(items) - 1)])
+        possible_keys.append(xor1_crack(temp, 1))
+    print(possible_keys)
+
+    decrypted = vigenere_xor(encrypted, key)
+    return decrypted.split('\n')

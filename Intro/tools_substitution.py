@@ -1,7 +1,6 @@
 import string
-from math import log10
 from collections import Counter
-from random import random, sample, choice, randint
+from random import choice, randint
 
 
 def count_chars(encrypted):
@@ -66,13 +65,31 @@ class Gene:
         b = randint(0, 25)
         self.data[a], self.data[b] = self.data[b], self.data[a]
 
-    def get_score(self):
-        return 0
+    def get_score(self, text, dictionary, miss):
+        text = text.translate(str.maketrans(string.ascii_uppercase, self.data))
+        bit_length = len(list(dictionary.keys())[0])
+        bits = len(text) - bit_length
+        self.score = -sum(dictionary.get(text[i:i+bit_length], miss) for i in range(bits)) / bits
 
 
-def substitution_crack(text):
+def substitution_crack(text, dictionary, miss):
     genes = random_genes(1000)
-    genes = sorted(genes, key=lambda gene: gene.score)[:500]
 
     for g in genes:
-        g.get_score()
+        g.get_score(text, dictionary, miss)
+
+    best = genes[0]
+    current_generation, best_generation = 1
+
+    for _ in range(100):
+        genes = sorted(genes, key=lambda gene: gene.score)[:len(genes) / 2]
+
+        for gene in genes:
+            gene.crossover(genes[randint(0, len(genes))])
+
+        for gene in genes:
+            gene.mutation()
+            gene.get_score(text, dictionary, miss)
+            print(f'{gene.score}, {gene.data}')
+
+        current_generation += 1

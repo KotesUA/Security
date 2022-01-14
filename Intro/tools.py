@@ -1,13 +1,17 @@
 import base64
 import binascii
+import csv
+
+import pandas
 
 try:
-    from math import gcd
+    from math import gcd, log10
 except ImportError:
     from fractions import gcd
 
 from functools import reduce
-from collections import Counter
+from collections import Counter, OrderedDict
+from pprint import pprint
 
 SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,. '
 
@@ -139,10 +143,15 @@ def xor2_crack(encrypted):
 
 # Count every char frequency in encrypted text
 def count_chars(encrypted):
+    # Create new dictionary with Counter tool
     frequency_dict = Counter(encrypted)
+
+    # Count frequencies
     frequency_dict = {char: round(n / len(encrypted), 10)
                       for char, n in sorted(frequency_dict.items(),
                                             key=lambda x: x[-1],
                                             reverse=True)}
+
+    # Print result
     print(f'{len(frequency_dict) = }')
     print(f'{frequency_dict = }')

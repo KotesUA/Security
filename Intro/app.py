@@ -25,5 +25,5 @@ if __name__ == '__main__':
         for key, val in ngr4.items():
             ngr4[key] = log10(val / s)
         miss = log10(0.01/s)
-    print(ngr4)
+
     res4 = substitution_crack(SUBSTITUTION, ngr4, miss)

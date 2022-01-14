@@ -1,6 +1,6 @@
 import string
 from collections import Counter
-from random import choice, randint
+from random import choice, randint, sample
 
 
 def count_chars(encrypted):
@@ -32,9 +32,10 @@ class Gene:
 
     # crossover two parents to create two children
     def crossover(self, partner):
-        child = Gene(self.data)
-
+        child_data = []
+        print(self.data)
         array = set(self.data)
+        print(array, array.pop())
 
         for own_data, partner_data in zip(self.data, partner.data):
             is_good1 = own_data in array
@@ -42,17 +43,19 @@ class Gene:
 
             new_char = choice((own_data, partner_data)) if is_good1 and is_good2 \
                 else own_data if is_good1 \
-                else partner_data if is_good2 else array.pop()
+                else partner_data if is_good2 \
+                else array.pop()
 
-            child.data.append(new_char)
+            child_data.append(new_char)
             array.discard(new_char)
+
+        child = Gene(''.join(child_data))
         return child
 
     # change two letters visa-versa
     def mutation(self):
-        a = randint(0, 25)
-        b = randint(0, 25)
-        self.data[a], self.data[b] = self.data[b], self.data[a]
+        ch1, ch2 = sample(range(len(self.data)))
+        self.data[ch1], self.data[ch2] = self.data[ch2], self.data[ch1]
 
     def get_score(self, text, dictionary, miss):
         text = text.translate(str.maketrans(string.ascii_uppercase, self.data))
@@ -71,10 +74,11 @@ def substitution_crack(text, dictionary, miss):
     current_generation = best_generation = 1
 
     for _ in range(100):
-        genes = sorted(genes, key=lambda x: x.score)[:len(genes) / 2]
+        genes = sorted(genes, key=lambda x: x.score)[:200]
 
-        for gene in genes:
-            gene.crossover(genes[randint(0, len(genes))])
+        for _ in range(1000 - len(genes)):
+            p1, p2 = sample(range(len(genes)), 2)
+            genes.append(genes[p1].crossover(genes[p2]))
 
         for gene in genes:
             gene.mutation()

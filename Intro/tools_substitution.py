@@ -1,4 +1,6 @@
+from math import log10
 from collections import Counter
+from source import bigrams, trigrams
 
 
 # Count every char frequency in encrypted text
@@ -15,3 +17,10 @@ def count_chars(encrypted):
     # Print result
     print(f'{len(frequency_dict) = }')
     print(f'{frequency_dict = }')
+
+
+def reformat_dict(dictionary):
+    total = sum(dictionary.values())
+    for x, y in dictionary.items():
+        dictionary[x] = log10(y / total)
+    return dictionary

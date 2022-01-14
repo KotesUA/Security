@@ -1,6 +1,6 @@
 import base64
-from tools import binary_to_text, single_byte_xor, xor2_crack
-from source import BITS, XOR1, XOR2
+from tools import binary_to_text, single_byte_xor, xor2_crack, count_chars
+from source import BITS, XOR1, XOR2, SUBSTITUTION
 
 
 if __name__ == '__main__':
@@ -13,3 +13,5 @@ if __name__ == '__main__':
 
     res3 = xor2_crack(XOR2)
     print(res3)
+
+    count_chars(SUBSTITUTION)

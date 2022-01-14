@@ -5,7 +5,9 @@ try:
     from math import gcd
 except ImportError:
     from fractions import gcd
+
 from functools import reduce
+from collections import Counter
 
 SYMBOLS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,. '
 
@@ -130,7 +132,17 @@ def xor2_crack(encrypted):
     for n in range(0, key_length):
         temp = ''.join([items[i][n] for i in range(0, len(items) - 1)])
         possible_keys.append(xor1_crack(temp, 1))
-    print(possible_keys)
 
     decrypted = vigenere_xor(encrypted, key)
     return decrypted.split('\n')
+
+
+# Count every char frequency in encrypted text
+def count_chars(encrypted):
+    frequency_dict = Counter(encrypted)
+    frequency_dict = {char: round(n / len(encrypted), 10)
+                      for char, n in sorted(frequency_dict.items(),
+                                            key=lambda x: x[-1],
+                                            reverse=True)}
+    print(f'{len(frequency_dict) = }')
+    print(f'{frequency_dict = }')

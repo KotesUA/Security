@@ -1,6 +1,6 @@
 from tools import binary_to_text, single_byte_xor, xor2_crack
-from tools_substitution import count_chars, reformat_dict
-from source import BITS, XOR1, XOR2, SUBSTITUTION
+from tools_substitution import count_chars
+from source import BITS, XOR1, XOR2, SUBSTITUTION, NGR4
 
 
 if __name__ == '__main__':
@@ -15,4 +15,3 @@ if __name__ == '__main__':
     print(res3)
 
     count_chars(SUBSTITUTION)
-    ngrams4 = reformat_dict(ngrams4)

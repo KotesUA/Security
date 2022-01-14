@@ -19,11 +19,15 @@ def count_chars(encrypted):
     print(f'{frequency_dict = }')
 
 
-def reformat_dict(dictionary):
-    total = sum(dictionary.values())
-    for x, y in dictionary.items():
-        dictionary[x] = log10(y / total)
-    return dictionary
+def readd_ngr4():
+    with open('ngrams4.txt') as file:
+        lines = file.readlines()
+        ngr4 = {}
+        for line in lines:
+            l = line.split()
+            ngr4[l[0]] = l[1]
+        file.close()
+    return ngr4
 
 
 def random_gene():
@@ -36,12 +40,25 @@ class Gene:
         # дата это строка которую нам удалось расшифровать
         self.data = data
 
-
     # crossover two parents to create two children
     def crossover(self, partner):
         child = Gene(self.data)
-        if partner.data > child.data:
-            child.data = partner.data
+
+        array = set(self.data)
+
+        for own_data, partner_data in zip(self.data, partner.data):
+            is_good1 = own_data in array
+            is_good2 = partner_data in array
+            if is_good1 and is_good2:
+                new_char = choice((own_data, partner_data))
+            elif is_good1:
+                new_char = own_data
+            elif is_good2:
+                new_char = partner_data
+            else:
+                array.pop()
+            child.data.append(new_char)
+            array.discard(new_char)
         return child
 
     # меняем две буквы в строке местами
@@ -54,6 +71,9 @@ class Gene:
         #     if rand() < r_mut:
         #         # flip the bit
         #         bitstring[i] = 1 - bitstring[i]
+
+    def get_score(self):
+        return 0
 
 
 # genetic algorithm

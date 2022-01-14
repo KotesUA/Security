@@ -28,7 +28,7 @@ def reformat_dict(dictionary):
     return dictionary
 
 
-class Genetic:
+class Gene:
     def __init__(self, data):
         self.data = data
 
@@ -43,26 +43,27 @@ class Genetic:
 
 
     # crossover two parents to create two children
-    def crossover(p1, p2, r_cross):
-        # children are copies of parents by default
-        c1, c2 = p1.copy(), p2.copy()
+    def crossover(self, partner):
+        child = Gene(self.data)
+        if partner.data > child.data:
+            child.data = partner.data
+        return child
         # check for recombination
-        if rand() < r_cross:
-            # select crossover point that is not on the end of the string
-            pt = randint(1, len(p1) - 2)
-            # perform crossover
-            c1 = p1[:pt] + p2[pt:]
-            c2 = p2[:pt] + p1[pt:]
-        return [c1, c2]
+        # if rand() < r_cross:
+        #     # select crossover point that is not on the end of the string
+        #     pt = randint(1, len(p1) - 2)
+        #     # perform crossover
+        #     c1 = p1[:pt] + p2[pt:]
+        #     c2 = p2[:pt] + p1[pt:]
+        # return [c1, c2]
 
-
-# mutation operator
-def mutation(bitstring, r_mut):
-    for i in range(len(bitstring)):
-        # check for a mutation
-        if rand() < r_mut:
-            # flip the bit
-            bitstring[i] = 1 - bitstring[i]
+    # mutation operator
+    def mutation(bitstring, r_mut):
+        for i in range(len(bitstring)):
+            # check for a mutation
+            if rand() < r_mut:
+                # flip the bit
+                bitstring[i] = 1 - bitstring[i]
 
 
 # genetic algorithm

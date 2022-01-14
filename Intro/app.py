@@ -1,7 +1,6 @@
-import base64
 from tools import binary_to_text, single_byte_xor, xor2_crack
 from tools_substitution import count_chars, reformat_dict
-from source import BITS, XOR1, XOR2, SUBSTITUTION, ngrams4
+from source import BITS, XOR1, XOR2, SUBSTITUTION
 
 
 if __name__ == '__main__':
@@ -17,4 +16,3 @@ if __name__ == '__main__':
 
     count_chars(SUBSTITUTION)
     ngrams4 = reformat_dict(ngrams4)
-    print(ngrams4)

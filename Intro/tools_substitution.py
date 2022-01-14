@@ -18,19 +18,8 @@ def count_chars(encrypted):
     print(f'{frequency_dict = }')
 
 
-def readd_ngr4():
-    with open('ngrams4.txt') as file:
-        lines = file.readlines()
-        ngr4 = {}
-        for line in lines:
-            l = line.split()
-            ngr4[l[0]] = l[1]
-        file.close()
-    return ngr4
-
-
 def random_genes(number):
-    return [Gene(''.join(choice(string.ascii_uppercase) for x in range(26))) for _ in range(number)]
+    return [Gene(''.join(choice(string.ascii_uppercase) for _ in range(26))) for _ in range(number)]
 
 
 # class to represent a gene
@@ -79,10 +68,10 @@ def substitution_crack(text, dictionary, miss):
         g.get_score(text, dictionary, miss)
 
     best = genes[0]
-    current_generation, best_generation = 1
+    current_generation = best_generation = 1
 
     for _ in range(100):
-        genes = sorted(genes, key=lambda gene: gene.score)[:len(genes) / 2]
+        genes = sorted(genes, key=lambda x: x.score)[:len(genes) / 2]
 
         for gene in genes:
             gene.crossover(genes[randint(0, len(genes))])
@@ -93,3 +82,4 @@ def substitution_crack(text, dictionary, miss):
             print(f'{gene.score}, {gene.data}')
 
         current_generation += 1
+    return ""

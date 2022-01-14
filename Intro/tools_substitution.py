@@ -1,7 +1,7 @@
 import string
 from math import log10
 from collections import Counter
-from random import random, sample, choice
+from random import random, sample, choice, randint
 
 
 def count_chars(encrypted):
@@ -44,9 +44,11 @@ class Gene:
             child.data = partner.data
         return child
 
-    # mutation operator
+    # меняем две буквы в строке местами
     def mutation(self):
-
+        a = randint(0, 25)
+        b = randint(0, 25)
+        self.data[a], self.data[b] = self.data[b], self.data[a]
         # for i in range(len(bitstring)):
         #     # check for a mutation
         #     if rand() < r_mut:

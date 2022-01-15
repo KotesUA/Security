@@ -1,3 +1,7 @@
+import requests
+
+from Casino.Player import Player
+
 URL = 'http://95.217.177.249/casino'
 LAST_ID = 1
 
@@ -15,4 +19,4 @@ def mt_crack():
 
 
 if __name__ == '__main__':
-    pass
+    player = Player.register()

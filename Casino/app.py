@@ -20,3 +20,4 @@ def mt_crack():
 
 if __name__ == '__main__':
     player = Player.register()
+    print(player.play('Lcg', 10, 1), player.money)

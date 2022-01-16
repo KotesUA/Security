@@ -42,35 +42,28 @@ def generate(num):
     return passwords
 
 
-def pass_md5(passwords):
-    hashes = {}
-    for p in passwords:
-        hashes[p] = hashlib.md5(bytes(p, encoding="ascii"))
-    return hashes
+def pass_md5(password):
+    return hashlib.md5(bytes(password, encoding="ascii")).hexdigest()
 
 
-def pass_bcrypt(passwords):
-    hashes = {}
-    for p in passwords:
-        salt = bcrypt.gensalt()
-        hash = bcrypt.hashpw(bytes(p, encoding="ascii"), salt).decode()
-        hashes[hash] = salt
-    return hashes
+def pass_bcrypt(password):
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(bytes(password, encoding="ascii"), salt).decode()
+    print(hashed)
+    return salt, hashed
 
 
 if __name__ == '__main__':
-    passes = generate(100000)
-    bcr = pass_bcrypt(passes)
-    md5 = pass_md5(passes)
+    passes = generate(100)
+    print(passes)
 
-    with open('bcrypt-100k.csv', 'w') as file:
-        writer = csv.DictWriter(file, fieldnames=('hash', 'salt'))
-        writer.writeheader()
-        for h in bcr:
-            writer.writerow(h)
+    # file = open('bcrypt-100k.csv', 'w')
+    # for p in passes:
+    #     s, h = pass_bcrypt(p)
+    #     file.write(f'{s}, {h}\n')
+    # file.close()
 
-    with open('md5-100k.csv', 'w') as file:
-        writer = csv.DictWriter(file, fieldnames=('pass', 'hash'))
-        writer.writeheader()
-        for h in md5:
-            writer.writerow(h)
+    file = open('md5-100k.csv', 'w')
+    for p in passes:
+        file.write(f'{pass_md5(p)}\n')
+    file.close()

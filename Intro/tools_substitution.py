@@ -85,4 +85,3 @@ def substitution_crack(text, dictionary, miss):
             # print(f'{gene.score}, {gene.data}')
 
     return text.translate(str.maketrans(string.ascii_uppercase, best.data))
-    return ""

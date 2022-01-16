@@ -27,3 +27,5 @@ if __name__ == '__main__':
         miss = log10(0.01/s)
 
     res4 = substitution_crack(SUBSTITUTION, ngr4, miss)
+    # TODO https://gist.github.com/hrickards/7142534
+    # опробовать утром, вроде понятно

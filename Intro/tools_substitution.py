@@ -23,6 +23,7 @@ def random_genes(number):
 
 
 # class to represent a gene
+# from basic implementation here: https://machinelearningmastery.com/simple-genetic-algorithm-from-scratch-in-python/
 class Gene:
     def __init__(self, data):
         # data stores ascii string
@@ -33,18 +34,13 @@ class Gene:
     # crossover two parents to create two children
     def crossover(self, partner):
         child_data = []
-        print(self.data)
         array = set(self.data)
-        print(array, array.pop())
 
         for own_data, partner_data in zip(self.data, partner.data):
             is_good1 = own_data in array
             is_good2 = partner_data in array
 
-            new_char = choice((own_data, partner_data)) if is_good1 and is_good2 \
-                else own_data if is_good1 \
-                else partner_data if is_good2 \
-                else array.pop()
+            new_char = choice((own_data, partner_data)) if is_good1 and is_good2 else own_data if is_good1 else partner_data
 
             child_data.append(new_char)
             array.discard(new_char)
@@ -54,8 +50,10 @@ class Gene:
 
     # change two letters visa-versa
     def mutation(self):
-        ch1, ch2 = sample(range(len(self.data)))
-        self.data[ch1], self.data[ch2] = self.data[ch2], self.data[ch1]
+        ch1, ch2 = sample(range(len(self.data)), 2)
+        data_array = list(self.data)
+        data_array[ch1], data_array[ch2] = data_array[ch2], data_array[ch1]
+        self.data = ''.join(data_array)
 
     def get_score(self, text, dictionary, miss):
         text = text.translate(str.maketrans(string.ascii_uppercase, self.data))
@@ -71,10 +69,11 @@ def substitution_crack(text, dictionary, miss):
         g.get_score(text, dictionary, miss)
 
     best = genes[0]
-    current_generation = best_generation = 1
 
-    for _ in range(100):
+    for i in range(128):
         genes = sorted(genes, key=lambda x: x.score)[:200]
+        best = genes[0]
+        print(f'Generation {i} started, best gene data={best.data}')
 
         for _ in range(1000 - len(genes)):
             p1, p2 = sample(range(len(genes)), 2)
@@ -83,7 +82,7 @@ def substitution_crack(text, dictionary, miss):
         for gene in genes:
             gene.mutation()
             gene.get_score(text, dictionary, miss)
-            print(f'{gene.score}, {gene.data}')
+            # print(f'{gene.score}, {gene.data}')
 
-        current_generation += 1
+    return text.translate(str.maketrans(string.ascii_uppercase, best.data))
     return ""

@@ -1,14 +1,10 @@
-import datetime
-import datetime as dt
-
-import requests
-
+from sympy import mod_inverse
 from Casino.Player import Player
 from MT19937 import MT19937
 
 URL = 'http://95.217.177.249/casino'
 LAST_ID = 1197
-M = 2 ** 32
+M = (2 ** 32) // 2
 
 
 def connect():
@@ -40,15 +36,15 @@ if __name__ == '__main__':
     #     if num == num_casino:
     #         print('Win')
 
-    values = [int(player.play('Lcg', 1, 1)['realNumber']) for _ in range(3)]
-    print(values)
-    delta1, delta2 = values[1] - values[0], values[2] - values[1]
+    n1, n2, n3 = [int(player.play('Lcg', 1, 1)['realNumber']) for _ in range(3)]
+    delta1 = n2 - n1
+    delta2 = n3 - n2
 
     # https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python
-    mod_inverse = pow(delta1, M - 2, M)
-    print(mod_inverse)
+    # mod_inverse = pow(delta1, M - 2, M)
 
-    a = (delta2 * mod_inverse) % M
+    # https://www.kite.com/python/answers/how-to-calculate-modular-multiplicative-inverse-in-python
+    a = (delta2 * mod_inverse(delta1, M)) % M
     b = (delta1 * a) % M
     print(f'A={a}, B={b}')
 

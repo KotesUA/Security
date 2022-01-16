@@ -1,3 +1,4 @@
+import csv
 from random import randint, choice
 from string import ascii_letters, digits
 import hashlib
@@ -42,9 +43,9 @@ def generate(num):
 
 
 def pass_md5(passwords):
-    hashes = []
+    hashes = {}
     for p in passwords:
-        hashes.append(hashlib.md5(bytes(p, encoding="ascii")))
+        hashes[p] = hashlib.md5(bytes(p, encoding="ascii"))
     return hashes
 
 
@@ -58,6 +59,18 @@ def pass_bcrypt(passwords):
 
 
 if __name__ == '__main__':
-    passes = generate(100)
-    h = pass_bcrypt(passes)
-    print(h)
+    passes = generate(100000)
+    bcr = pass_bcrypt(passes)
+    md5 = pass_md5(passes)
+
+    with open('bcrypt-100k.csv', 'w') as file:
+        writer = csv.DictWriter(file, fieldnames=('hash', 'salt'))
+        writer.writeheader()
+        for h in bcr:
+            writer.writerow(h)
+
+    with open('md5-100k.csv', 'w') as file:
+        writer = csv.DictWriter(file, fieldnames=('pass', 'hash'))
+        writer.writeheader()
+        for h in md5:
+            writer.writerow(h)

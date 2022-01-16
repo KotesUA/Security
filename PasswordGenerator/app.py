@@ -1,6 +1,7 @@
 from random import randint, choice
 from string import ascii_letters, digits
 import hashlib
+import bcrypt
 
 
 # https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt
@@ -47,5 +48,16 @@ def pass_md5(passwords):
     return hashes
 
 
+def pass_bcrypt(passwords):
+    hashes = {}
+    for p in passwords:
+        salt = bcrypt.gensalt()
+        hash = bcrypt.hashpw(bytes(p, encoding="ascii"), salt).decode()
+        hashes[hash] = salt
+    return hashes
+
+
 if __name__ == '__main__':
-    print(generate(100))
+    passes = generate(100)
+    h = pass_bcrypt(passes)
+    print(h)

@@ -7,7 +7,7 @@ def get100():
     passwords = []
     with open('top100.txt') as file:
         for p in file.readlines():
-            p.replace('\n', '')
+            p = ''.join(p.split('\n'))
             passwords.append(p)
     return passwords
 
@@ -17,7 +17,7 @@ def get1M():
     passwords = []
     with open('top1000000.txt') as file:
         for p in file.readlines():
-            p.replace('\n', '')
+            p = ''.join(p.split('\n'))
             passwords.append(p)
     return passwords
 

@@ -6,54 +6,60 @@ a = 0x9908B0DF
 (s, b) = (7, 0x9D2C5680)
 (t, c) = (15, 0xEFC60000)
 l = 18
-f = 1812433253
+f = 0x6c078965
+
+# (1 << r) - 1 // That is, the binary number of r 1's
+lower_mask = 0x7FFFFFFF
+
+# lowest w bits of (not lower_mask)
+upper_mask = 0x80000000
 
 
-# make a arry to store the state of the generator
-MT = [0 for i in range(n)]
-index = n+1
-lower_mask = 0x7FFFFFFF #(1 << r) - 1 // That is, the binary number of r 1's
-upper_mask = 0x80000000 #lowest w bits of (not lower_mask)
+class MT19937:
+    def __init__(self, seed=None):
+        # make an array to store the state of the generator
+        self.MT = [0 for _ in range(n)]
+        self.index = n
+        if seed is not None:
+            self.mt_seed(seed)
 
+    # initialize the generator from a seed
+    def mt_seed(self, seed):
+        self.MT[0] = seed
+        for i in range(1, n):
+            temp = f * (self.MT[i - 1] ^ (self.MT[i - 1] >> (w - 2))) + i
+            self.MT[i] = temp & 0xffffffff
 
-# initialize the generator from a seed
-def mt_seed(seed):
-    # global index
-    # index = n
-    MT[0] = seed
-    for i in range(1, n):
-        temp = f * (MT[i-1] ^ (MT[i-1] >> (w-2))) + i
-        MT[i] = temp & 0xffffffff
+    # Extract a tempered value based on MT[index]
+    # calling twist() every n numbers
+    def extract_number(self):
+        if self.index >= 624:
+            self.twist()
 
+        y = self.MT[self.index]
+        y ^= y >> u
+        y ^= ((y << s) & b)
+        y ^= ((y << t) & c)
+        y ^= y >> l
 
-# Extract a tempered value based on MT[index]
-# calling twist() every n numbers
-def extract_number():
-    global index
-    if index >= n:
-        twist()
-        index = 0
+        self.index += 1
+        return y & 0xffffffff
 
-    y = MT[index]
-    y = y ^ ((y >> u) & d)
-    y = y ^ ((y << s) & b)
-    y = y ^ ((y << t) & c)
-    y = y ^ (y >> l)
+    # Generate the next n values from the series x_i
+    def twist(self):
+        for i in range(n):
+            x = ((self.MT[i] & upper_mask) +
+                 (self.MT[(i + 1) % n] & lower_mask)) \
+                & 0xffffffff
+            self.MT[i] = self.MT[(i + m) % n] ^ (x >> 1)
 
-    index += 1
-    return y & 0xffffffff
+            if x & 1 != 0:
+                self.MT[i] ^= a
 
-
-# Generate the next n values from the series x_i
-def twist():
-    for i in range(0, n):
-        x = (MT[i] & upper_mask) + (MT[(i+1) % n] & lower_mask)
-        xA = x >> 1
-        if (x % 2) != 0:
-            xA = xA ^ a
-        MT[i] = MT[(i + m) % n] ^ xA
+        self.index = 0
 
 
 if __name__ == '__main__':
-    mt_seed(0)
-    print(extract_number())
+    generator = MT19937(123123123)
+    for i in range(n):
+        print(generator.extract_number())

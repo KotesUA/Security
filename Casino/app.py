@@ -20,4 +20,5 @@ def mt_crack():
 
 if __name__ == '__main__':
     player = Player.register()
-    print(player.play('Lcg', 10, 1), player.money)
+    for i in range (1000):
+        print(player.play('Lcg', 1, 1), player.money)

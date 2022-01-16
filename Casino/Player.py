@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import requests
 
 URL = 'http://95.217.177.249/casino'
@@ -9,6 +11,7 @@ class Player:
         self.uuid = uuid
         self.money = money
         self.deletion_time = deletion_time
+        self.creation_time = self.deletion_time - timedelta(hours=1)
 
     @classmethod
     def register(cls):

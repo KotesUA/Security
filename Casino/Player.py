@@ -33,4 +33,5 @@ class Player:
         response = requests.get(url, {'id': self.uuid, 'bet': bet, 'number': number})
         if response.status_code // 100 == 2:
             self.money = response.json()['account']['money']
-            return response.json()['realNumber']
+            # return response.json()['realNumber']
+            return response.json()

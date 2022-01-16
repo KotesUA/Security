@@ -40,7 +40,8 @@ if __name__ == '__main__':
     #     if num == num_casino:
     #         print('Win')
 
-    values = [player.play('Lcg', 1, 1) for _ in range(3)]
+    values = [int(player.play('Lcg', 1, 1)['realNumber']) for _ in range(3)]
+    print(values)
     delta1, delta2 = values[1] - values[0], values[2] - values[1]
 
     # https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python

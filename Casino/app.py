@@ -45,10 +45,16 @@ if __name__ == '__main__':
 
     # https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python
     mod_inverse = pow(delta1, -1, M)
+    
     a = (delta2 * mod_inverse) % M
     b = (delta1 * a) % M
     print(f'A={a}, B={b}')
 
-
+    val = player.play('Lcg', 1, 1)
+    num = (a * val + b) % M
+    print(player.play('Lcg', 999, num))
+    if player.money < 1000000:
+        num = (a * val + b) % M
+        print(player.play('Lcg', player.money, num))
 
 

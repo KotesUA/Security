@@ -4,15 +4,21 @@ from string import ascii_letters, digits
 
 # https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt
 def get100():
+    passwords = []
     with open('top100.txt') as file:
-        passwords = file.readlines()
+        for p in file.readlines():
+            p.replace('\n', '')
+            passwords.append(p)
     return passwords
 
 
 # https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt
 def get1M():
+    passwords = []
     with open('top1000000.txt') as file:
-        passwords = file.readlines()
+        for p in file.readlines():
+            p.replace('\n', '')
+            passwords.append(p)
     return passwords
 
 

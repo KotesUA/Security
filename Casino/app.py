@@ -28,7 +28,10 @@ if __name__ == '__main__':
     generator = MT19937(int(time_seed.total_seconds()))
     for i in range(100):
         num = generator.extract_number()
-        print(f'Wanted = {num}')
+        # print(f'Wanted = {num}')
 
-        num_casino = player.play('Lcg', 1, 1)
-        print(f'Casino showed = {num_casino}')
+        num_casino = player.play('Mt', 1, 1)
+        # print(f'Casino showed = {num_casino}')
+
+        if num == num_casino:
+            print('Win')

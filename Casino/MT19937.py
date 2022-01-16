@@ -28,7 +28,7 @@ class MT19937:
         self.MT[0] = seed
         for i in range(1, n):
             temp = f * (self.MT[i - 1] ^ (self.MT[i - 1] >> (w - 2))) + i
-            self.MT[i] = temp & 0xffffffff
+            self.MT[i] = self.to_long(temp)
 
     # Extract a tempered value based on MT[index]
     # calling twist() every n numbers
@@ -38,25 +38,26 @@ class MT19937:
 
         y = self.MT[self.index]
         y ^= y >> u
-        y ^= ((y << s) & b)
-        y ^= ((y << t) & c)
+        y ^= (y << s) & b
+        y ^= (y << t) & c
         y ^= y >> l
 
         self.index += 1
-        return y & 0xffffffff
+        return self.to_long(y)
 
     # Generate the next n values from the series x_i
     def twist(self):
         for i in range(n):
-            x = ((self.MT[i] & upper_mask) +
-                 (self.MT[(i + 1) % n] & lower_mask)) \
-                & 0xffffffff
+            x = self.to_long((self.MT[i] & upper_mask) + (self.MT[(i + 1) % n] & lower_mask))
             self.MT[i] = self.MT[(i + m) % n] ^ (x >> 1)
 
             if x & 1 != 0:
                 self.MT[i] ^= a
 
         self.index = 0
+
+    def to_long(self, val):
+        return val & 0xffffffff
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 from random import randint, choice
 from string import ascii_letters, digits
+import hashlib
 
 
 # https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-100.txt
@@ -37,6 +38,13 @@ def generate(num):
         else:
             passwords.append(''.join([choice(ascii_letters+digits) for _ in range(randint(8, 16))]))
     return passwords
+
+
+def pass_md5(passwords):
+    hashes = []
+    for p in passwords:
+        hashes.append(hashlib.md5(bytes(p, encoding="ascii")))
+    return hashes
 
 
 if __name__ == '__main__':

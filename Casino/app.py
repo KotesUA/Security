@@ -41,6 +41,12 @@ if __name__ == '__main__':
     #         print('Win')
 
     values = [player.play('Lcg', 1, 1) for _ in range(3)]
+    delta1, delta2 = values[2] - values[1], values[3] - values[2]
+    mod_inverse = pow(delta1, -1, M)
+    a = (delta2 * mod_inverse) % M
+    b = (delta1 * a) % M
+    print(f'A={a}, B={b}')
 
+    
 
 

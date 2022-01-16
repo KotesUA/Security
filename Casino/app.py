@@ -36,7 +36,7 @@ if __name__ == '__main__':
     #     if num == num_casino:
     #         print('Win')
 
-    n1, n2, n3 = [int(player.play('Lcg', 1, 1)['realNumber']) for _ in range(3)]
+    n1, n2, n3 = [player.play('Lcg', 1, 1)['realNumber'] for _ in range(3)]
     delta1 = n2 - n1
     delta2 = n3 - n2
 
@@ -45,12 +45,12 @@ if __name__ == '__main__':
 
     # https://www.kite.com/python/answers/how-to-calculate-modular-multiplicative-inverse-in-python
     a = (delta2 * mod_inverse(delta1, M)) % M
-    b = (delta1 * a) % M
+    b = (n2 - n1 * a) % M
     print(f'A={a}, B={b}')
 
-    val = int(player.play('Lcg', 1, 1)['realNumber'])
+    val = player.play('Lcg', 1, 1)['realNumber']
     num = (a * val + b) % M
-    print(num)
+    print(f'Next num = {num}')
     print(player.play('Lcg', 999, num))
     if player.money < 1000000:
         num = (a * val + b) % M

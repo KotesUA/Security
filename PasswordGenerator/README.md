@@ -26,3 +26,7 @@ Also tried with sha1-salt and argon2i from different classmates, but kept reciev
 Hashfile 'sha1_salt.csv' on line 54323 (9073a6...4d90197386c521e,09c2810034142e6d): Separator unmatched
 ```
 hashcat -m 110 -a 0 -d 1 strongHashes.csv top_100k.txt
+
+_ 
+
+Conclusion is: do not store hashed passwords unencrypted (lab5-6) or generate truly random passwords, otherwise passwords can be easily recovered and used.

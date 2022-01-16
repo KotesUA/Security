@@ -7,7 +7,7 @@ URL = 'http://95.217.177.249/casino'
 
 
 class Player:
-    ID = 1197
+    ID = 1208
 
     def __init__(self, uuid, money, deletion_time):
         self.uuid = uuid

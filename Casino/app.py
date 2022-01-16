@@ -1,13 +1,14 @@
 from sympy import mod_inverse
 from Casino.Player import Player
 from MT19937 import MT19937
+import datetime as dt
 
 URL = 'http://95.217.177.249/casino'
 LAST_ID = 1197
 M = (2 ** 32) // 2
 
 
-def lcg_crack():
+def lcg_crack(player):
     n1, n2, n3 = [player.play('Lcg', 1, 1)['realNumber'] for _ in range(3)]
 
     # https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python
@@ -19,34 +20,25 @@ def lcg_crack():
     print(f'A={a}, B={b}')
 
     val = player.play('Lcg', 1, 1)['realNumber']
-    num = (a * n3 + b) % M
+    num = (a * val + b) % M
 
     while player.money <= 1000000:
         print(player.play('Lcg', player.money, num))
         num = (a * num + b) % M
 
 
-def mt_crack():
-    pass
+def mt_crack(player):
+    time_seed = player.creation_time - dt.datetime.fromtimestamp(0, dt.timezone.utc)
+
+    generator = MT19937(int(time_seed.total_seconds()))
+    while player.money <= 1000000:
+        num = generator.extract_number()
+        print(player.play('Mt', player.money, num))
 
 
 if __name__ == '__main__':
     player = Player.register()
-    # time_seed = player.creation_time - dt.datetime.fromtimestamp(0, dt.timezone.utc)
 
+    lcg_crack(player)
 
-
-    # generator = MT19937(int(time_seed.total_seconds()))
-    # for i in range(100):
-    #     num = generator.extract_number()
-    #     # print(f'Wanted = {num}')
-    #
-    #     num_casino = player.play('Mt', 1, 1)
-    #     # print(f'Casino showed = {num_casino}')
-    #
-    #     if num == num_casino:
-    #         print('Win')
-
-
-
-
+    # mt_crack(player)

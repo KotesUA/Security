@@ -1,3 +1,5 @@
+import datetime as dt
+
 import requests
 
 from Casino.Player import Player
@@ -21,8 +23,13 @@ def mt_crack():
 
 if __name__ == '__main__':
     player = Player.register()
+    time_seed = player.creation_time - dt.datetime.fromtimestamp(0, dt.timezone.utc)
     # for i in range(1000):
     #     print(player.play('Lcg', 1, 1), player.money)
-    mt_seed(0)
+    mt_seed(int(time_seed.total_seconds()))
     for i in range(1000):
-        print(extract_number())
+        num = extract_number()
+        print(f'Wanted = {num}')
+
+        num_casino = player.play('Lcg', 1, 1)
+        print(f'Casino showed = {num_casino}')

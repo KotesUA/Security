@@ -1,8 +1,10 @@
 from datetime import timedelta
 
+import dateutil.parser
 import requests
 
 URL = 'http://95.217.177.249/casino'
+
 
 class Player:
     ID = 1150
@@ -10,7 +12,7 @@ class Player:
     def __init__(self, uuid, money, deletion_time):
         self.uuid = uuid
         self.money = money
-        self.deletion_time = deletion_time
+        self.deletion_time = dateutil.parser.isoparse(deletion_time)
         self.creation_time = self.deletion_time - timedelta(hours=1)
 
     @classmethod
